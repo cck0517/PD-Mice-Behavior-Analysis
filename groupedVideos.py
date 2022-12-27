@@ -22,6 +22,9 @@ for i in tqdm(range(1, len(df))):
     # Get the video length 
     video_start = last + line[2]
     video_end = video_start + line[3]
+    duration = video_end-video_start
+    if duration < 2:
+        continue
     # Use ffmpeg command to extract the video snippet and save it to the corresponding folder 
     os.system(('ffmpeg -ss {} -i BSOID_2.34/test.mp4 -to {} -c copy -copyts BSOID_2.34/video_snippets/{}/video-{}.mp4').format(video_start, video_end, labels, video_start))
     last = video_end
