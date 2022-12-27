@@ -10,7 +10,7 @@ df = pd.read_csv('BSOID_2.34/Dec-24-2022_2022-12-17 22-34-43bout_lengths_60Hz202
 
 if not os.path.exists('video snippets'):
     os.makedirs('video snippets')
-'''
+
 last = 0
 for i in tqdm(range(1, len(df))):
     # Read the first line in the csv file
@@ -25,4 +25,4 @@ for i in tqdm(range(1, len(df))):
     # Use ffmpeg command to extract the video snippet and save it to the corresponding folder 
     os.system(('ffmpeg -ss {} -i BSOID_2.34/test.mp4 -to {} -c copy -copyts BSOID_2.34/video_snippets/{}/video-{}.mp4').format(video_start, video_end, labels, video_start))
     last = video_end
-'''
+
