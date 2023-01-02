@@ -2,7 +2,7 @@ import scipy.io as sio
 import os
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from matplotlib_scalebar.scalebar import ScaleBar
+from matplotlib_scalebar.scalebar import ScaleBar # pip install matplotlib-scalebar
 current_path = os.getcwd()
 spiketrain = sio.loadmat(current_path + '/VideoEditing/spiketrain.mat')
 # get all unique values from the array
@@ -21,7 +21,8 @@ line, = ax.plot([],[], c='black', lw=0.1)
 # Create scale bar
 scalebar = ScaleBar(dx=2, length_fraction=0.032, width_fraction=0.005, location='lower right', scale_formatter = lambda value, unit: f"{100} {'ms'}")         
 ax.add_artist(scalebar)
-plt.axis('off')
+# set x axis invisible
+ax.get_xaxis().set_visible(False)
 
 def animate(i):
     for f in range(i*51-51, i*51):
@@ -38,5 +39,5 @@ def animate(i):
 
 anim = FuncAnimation(fig, animate, frames=5520, interval=1, blit=False) # interval: delay between frames in milliseconds
 # save the animation as mp4 video file
-anim.save(current_path + '/VideoEditing/spiketrain.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+anim.save(current_path + '/VideoEditing/spiketrain_1.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 print('Done')

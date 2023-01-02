@@ -37,17 +37,15 @@ def animate(i):
     ax2.plot(index[:i], FireRate.head(i), c='black') # plot the line
     ax2.set_xlim([0, len(index)]) # fix the x axis
     ax2.set_ylim([0, 1.2*max(FireRate)])# fix the y axis
-    if i == len(index):
-        plt.close()
+
 
 # parameters: fig, animate, init_func, frames, interval, blit
 # blit: whether to re-draw the entire figure each frame
 # frames: number of frames to draw
 # interval: delay between frames in milliseconds
-anim = FuncAnimation(fig, animate, frames=len(df), interval=1, blit=False) 
+anim = FuncAnimation(fig, animate, frames=len(df)+1, interval=1, blit=False) 
 # save as mp4. This requires ffmpeg or mencoder to be installed
-anim.save(current_path + '/VideoEditing/EMG_FireRate.mp4', fps=2, extra_args=['-vcodec', 'libx264'])
+anim.save(current_path + '/VideoEditing/EMG_FireRate.mp4', fps=60, extra_args=['-vcodec', 'libx264'])
 print("Done")
-plt.show()
 
 
