@@ -3,17 +3,20 @@ import numpy as np
 import pandas as pd
 from matplotlib.animation import FuncAnimation
 import os
-
+import scipy.io as sio
 # current path
 current_path = os.getcwd()
-
 # load data
+EMG = sio.loadmat(current_path + '/VideoEditing/EMG.mat')
+EMG = EMG['EMG']
+FireRate = sio.loadmat(current_path + '/VideoEditing/FireRate.mat')
+FireRate = FireRate['FireRate']
+print(EMG.shape)
 df = pd.read_csv(current_path + '/VideoEditing/EMG_FireRate.csv', index_col=0) 
 index = np.arange(0, len(df))
 EMG = df.iloc[:, 0]
 print(df.columns)
 FireRate = df.loc[:, 'FireRate']
-
 
 # create a figure 
 fig = plt.figure()
@@ -45,7 +48,7 @@ def animate(i):
 # interval: delay between frames in milliseconds
 anim = FuncAnimation(fig, animate, frames=len(df)+1, interval=1, blit=False) 
 # save as mp4. This requires ffmpeg or mencoder to be installed
-anim.save(current_path + '/VideoEditing/EMG_FireRate.mp4', fps=60, extra_args=['-vcodec', 'libx264'])
+# anim.save(current_path + '/VideoEditing/EMG_FireRate.mp4', fps=60, extra_args=['-vcodec', 'libx264'])
 print("Done")
 
 
