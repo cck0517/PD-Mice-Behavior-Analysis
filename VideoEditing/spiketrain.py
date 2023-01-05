@@ -8,7 +8,7 @@ from moviepy.editor import *
 current_path = os.getcwd()
 spiketrain_path = current_path + '/VideoEditing/spiketrain.mat'
 video_path = current_path + '/VideoEditing/recording.mp4'
-def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=1/20, fps=5, show_axis=True, producing_video=False):
+def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=1/20, fps=5, show_axis=False, producing_video=False):
     """
     :param spiketrain_path: path to the spiketrain.mat file
     :param video_path: path to the recording video file (.mp4)

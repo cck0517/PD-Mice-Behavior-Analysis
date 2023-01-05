@@ -47,7 +47,10 @@ def imageToVideo(image_path, frame_path, recording_path, video_path):
     duration = frame_count/FPS
     num_frames = len(os.listdir(frame_path))
     fps = num_frames/duration
-    
+
     # use ffmpeg to convert images to video
     os.system('ffmpeg -r {} -i {} -vcodec libx264 -crf 25  -pix_fmt yuv420p {}'.format(fps, frame_path+"/%d.png", video_path))
     print("Done with converting the image to video!")
+    # delete the frames in the frame_path
+    for file in os.listdir(frame_path):
+        os.remove(os.path.join(frame_path, file))
