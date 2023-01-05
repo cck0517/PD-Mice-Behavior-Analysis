@@ -1,7 +1,7 @@
 VideoEditing/EEG/
 VideoEditing/EEG_new/
-VideoEditing/recording.mp4
 .DS_Store
+VideoEditing/__pycache__/
 BSOID_2.34/pngs_2.34/2022-12-17 22-34-43/
 out.mp4
 BSOID_2.34/test.mp4
@@ -17,3 +17,5 @@ BSOID_2.34/output/Dec-24-2022_2022-12-17 22-34-43_randomforest.sav
 VideoEditing/EEG/
 VideoEditing/EEG_new/
 B-SOID-master/
+VideoEditing/frames/
+VideoEditing/*.mp4
