@@ -2,12 +2,9 @@ import scipy.io as sio
 import os
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from matplotlib_scalebar.scalebar import ScaleBar # pip install matplotlib-scalebar
+from matplotlib_scalebar.scalebar import ScaleBar # pip install matplotlib-scalebar 
 import cv2
 from moviepy.editor import *
-current_path = os.getcwd()
-spiketrain_path = current_path + '/VideoEditing/spiketrain.mat'
-video_path = current_path + '/VideoEditing/recording.mp4'
 def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=1/20, fps=5, show_axis=False, producing_video=False):
     """
     :param spiketrain_path: path to the spiketrain.mat file
@@ -26,7 +23,7 @@ def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video,
     cap = cv2.VideoCapture(recording_path)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) # in pixels
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) # in pixels
-    fig = plt.figure(1, figsize=(width, height/500)) 
+    fig = plt.figure(1, figsize=(width/10, height/2500)) 
     ax = fig.add_subplot()
 
     # get video length
@@ -70,8 +67,18 @@ def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video,
         print('Start to stack recording video and spiketrain video ...')
         # stack the video and spiketrain video
         spiketrain = VideoFileClip(spiketrain_video)
-        recording = VideoFileClip(video_path)
-        final = CompositeVideoClip([recording], [spiketrain])
+        spiketrain = spiketrain
+        recording = VideoFileClip(recording_path).margin(0, 0, 50, 100, color=(255,255,255)) #0 is left, 1 is right, 2 is top, 3 is bottom
+        recording = recording.on_color(size=(1280, 1000), color=(255, 255, 255), pos=(0, 0))
+        final = [[recording], [spiketrain]]
+        final = clips_array(final)
         final.write_videofile(stacked_video, fps=FPS)
     else:
         plt.show()
+
+spiketrain_path = 'spiketrain.mat'
+recording_path = 'recording.mp4'
+spiketrain_video = 'spiketrain.mp4'
+stacked_video = 'stacked.mp4'
+
+spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=1/20, fps=5, show_axis=False, producing_video=True)

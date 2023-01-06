@@ -1,6 +1,6 @@
 import spiketrain as spt
 import imageToVideo as itv
-from moviepy.editor import *
+from moviepy.editor import * 
 import streamlit as st
 import os
 import time
@@ -21,7 +21,9 @@ spiketrain_path = st.text_input('Enter the path to the spiketrain matfile', os.g
 if not os.path.isfile(spiketrain_path):
     st.error('No such file')
 
+    
 spiketrain_video = os.getcwd() + "/spiketrain.mp4"
+stacked_video = os.getcwd() + "/stacked.mp4"
 
 st.markdown('### Spiketrain animation settings')
 st.markdown('#### length_fraction')
@@ -34,12 +36,15 @@ final_video = os.getcwd() + "/final_video.mp4"
 st.text_input('Video generated will be stored in the following path', final_video)
 
 if st.button('Generate video'):
-    try:
-        itv.imageToVideo(image_path, frame_path, recording_path, video_path)
-        spt.spiketrain(spiketrain_path, recording_path, spiketrain_video, length_fraction=length_fraction, fps=fps, show_axis=False, producing_video=False)
-        left_clip = VideoFileClip(spiketrain_video)
-        right_clip = VideoFileClip(video_path)
-        final_clip = concatenate_videoclips([left_clip, right_clip])
-        final_clip.write_videofile(final_video, fps=30)
-    except:
-        st.error('Something went wrong')
+    # if os.path.exists(video_path):
+    #     os.remove(video_path)
+    # itv.imageToVideo(image_path, frame_path, recording_path, video_path)
+    spt.spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=length_fraction, fps=fps, show_axis=False, producing_video=True)
+    left_clip = VideoFileClip(stacked_video)
+    right_clip = VideoFileClip(video_path)
+    final_clip = [[left_clip, right_clip]]
+    final_clip = clips_array(final_clip)
+    final_clip.write_videofile(final_video, fps=30)
+    # os.remove(video_path)
+    st.success('Video generated')
+
