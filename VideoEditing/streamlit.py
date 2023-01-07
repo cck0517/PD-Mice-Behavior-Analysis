@@ -4,7 +4,7 @@ from moviepy.editor import *
 import streamlit as st
 import os
 import time
-
+import cv2
 st.set_page_config(page_title='stack video', page_icon="📊",
                      layout='wide', initial_sidebar_state='auto')
 st.header('Synchronize recording with EEG, EMG and Spiketrain data')
@@ -23,7 +23,7 @@ if not os.path.isfile(spiketrain_path):
 
     
 spiketrain_video = os.getcwd() + "/spiketrain.mp4"
-stacked_video = os.getcwd() + "/stacked.mp4"
+stacked_video = os.getcwd() + "/stacked.mp4" # video with spiketrain and recording
 
 st.markdown('### Spiketrain animation settings')
 st.markdown('#### length_fraction')
@@ -36,15 +36,18 @@ final_video = os.getcwd() + "/final_video.mp4"
 st.text_input('Video generated will be stored in the following path', final_video)
 
 if st.button('Generate video'):
-    # if os.path.exists(video_path):
-    #     os.remove(video_path)
-    # itv.imageToVideo(image_path, frame_path, recording_path, video_path)
+    if os.path.exists(video_path):
+        os.remove(video_path)
+    itv.imageToVideo(image_path, frame_path, recording_path, video_path)
     spt.spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=length_fraction, fps=fps, show_axis=False, producing_video=True)
-    left_clip = VideoFileClip(stacked_video)
-    right_clip = VideoFileClip(video_path)
-    final_clip = [[left_clip, right_clip]]
-    final_clip = clips_array(final_clip)
-    final_clip.write_videofile(final_video, fps=30)
-    # os.remove(video_path)
+    right = VideoFileClip(video_path)
+    right = right.resize((1600, 2000))
+    right = right.on_color(size=(1600, 2000), color=(255, 255, 255), pos=(0, 100))
+    left = VideoFileClip(stacked_video)
+    final_clip = clips_array([[left, right]])
+    final_clip.write_videofile("final.mp4", fps=30)
+    os.remove(video_path)
+    os.remove(stacked_video)
+    os.remove(spiketrain_video)
     st.success('Video generated')
 

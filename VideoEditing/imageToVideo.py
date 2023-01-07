@@ -2,6 +2,7 @@ import cv2
 import os
 import numpy as np
 from tqdm import tqdm
+from moviepy.editor import *
 def imageToVideo(image_path, frame_path, recording_path, video_path):
     """
     :param image_path: path to the image
@@ -21,9 +22,11 @@ def imageToVideo(image_path, frame_path, recording_path, video_path):
     start, end = 0, width
     # Find the minimum and maximum width of the colored region
     for i in range(width):
-        if np.any(image[:, i, 1] != 255):
+        # convert a list to set
+        if np.all(image[:, i, 1] != 255):
             start = i
             break
+    start = 50
     for i in range(width//2, width):
         if np.all(image[:, i, 1] == 255):
             end = i
@@ -45,8 +48,10 @@ def imageToVideo(image_path, frame_path, recording_path, video_path):
     FPS = cap.get(cv2.CAP_PROP_FPS)
     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     duration = frame_count/FPS
+    print("Duration of the video: ", duration)
     num_frames = len(os.listdir(frame_path))
     fps = num_frames/duration
+    print("FPS of the video: ", fps)
 
     # use ffmpeg to convert images to video
     os.system('ffmpeg -r {} -i {} -vcodec libx264 -crf 25  -pix_fmt yuv420p {}'.format(fps, frame_path+"/%d.png", video_path))
@@ -54,3 +59,21 @@ def imageToVideo(image_path, frame_path, recording_path, video_path):
     # delete the frames in the frame_path
     for file in os.listdir(frame_path):
         os.remove(os.path.join(frame_path, file))
+
+# image_path = "Feeding.png"
+# frame_path = "frames"
+# recording_path = "recording.mp4"
+# video_path = "video.mp4"
+# # imageToVideo(image_path, frame_path, recording_path, video_path)
+# stacked_video = "stacked.mp4"
+# cap = cv2.VideoCapture(video_path)
+# width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) # in pixels
+# height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) # in pixels
+# print("Video width: ", width)
+# print("Video height: ", height)
+# right = VideoFileClip(video_path)
+# right = right.resize((1600, 2000))
+# right = right.on_color(size=(1600, 2000), color=(255, 255, 255), pos=(0, 100))
+# left = VideoFileClip(stacked_video)
+# final_clip = clips_array([[left, right]])
+# final_clip.write_videofile("final.mp4", fps=30)
