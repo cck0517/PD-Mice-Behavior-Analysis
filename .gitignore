@@ -19,3 +19,6 @@ VideoEditing/EEG_new/
 B-SOID-master/
 VideoEditing/frames/
 VideoEditing/*.mp4
+
+DataDiscovery/short_video.mp4
+DataDiscovery/__pycache__/

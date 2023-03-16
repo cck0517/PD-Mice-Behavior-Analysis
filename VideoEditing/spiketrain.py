@@ -5,7 +5,11 @@ from matplotlib.animation import FuncAnimation
 from matplotlib_scalebar.scalebar import ScaleBar # pip install matplotlib-scalebar 
 import cv2
 from moviepy.editor import *
+<<<<<<< Updated upstream
 def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=1/20, fps=1, show_axis=False, producing_video=False):
+=======
+def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=1/20, fps=5, show_axis=False, producing_video=False):
+>>>>>>> Stashed changes
     """
     :param spiketrain_path: path to the spiketrain.mat file
     :param video_path: path to the recording video file (.mp4)
@@ -79,6 +83,7 @@ def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video,
         print('Start to stack recording video and spiketrain video ...')
         # stack the video and spiketrain video
         spiketrain = VideoFileClip(spiketrain_video)
+<<<<<<< Updated upstream
         cap = cv2.VideoCapture(spiketrain_video)
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) # in pixels
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) # in pixels
@@ -91,6 +96,11 @@ def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video,
         final = clips_array(final)
         final = final.on_color(size=(1600, 2000), color=(255, 255, 255), pos=(0, 0))  
         final.write_videofile(stacked_video, fps=30)
+=======
+        recording = VideoFileClip(recording_path)
+        final = CompositeVideoClip([recording], [spiketrain])
+        final.write_videofile(stacked_video, fps=FPS)
+>>>>>>> Stashed changes
     else:
         plt.show()
 
