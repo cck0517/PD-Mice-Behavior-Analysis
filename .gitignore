@@ -1,15 +1,15 @@
-VideoEditing/EEG/
-VideoEditing/EEG_new/
 .DS_Store
-VideoEditing/__pycache__/
+
 BSOID_2.34/
-out.mp4
-VideoEditing/EEG/
-VideoEditing/EEG_new/
 B-SOID-master/
+B-SOID/
+out.mp4
+
 VideoEditing/frames/
 VideoEditing/*.mp4
-B-SOID/
+VideoEditing/EEG/
+VideoEditing/EEG_new/
+VideoEditing/__pycache__/
 
 DataDiscovery/*.mp4
 DataDiscovery/__pycache__/
