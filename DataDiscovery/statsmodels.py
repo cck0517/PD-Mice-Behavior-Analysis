@@ -89,6 +89,8 @@ immobility_df = merge_data(immobility, behavior='immobility')
 nonlocomotion_df = merge_data(nonlocomotion, behavior='nonlocomotion')
 df = pd.concat([locomotion_df, immobility_df, nonlocomotion_df])
 
+# save the dataframe to a csv file
+df.to_csv('kinematic_features.csv', index=False)
 
 # split the dataframe into features and labels
 X = df.iloc[:, :-1] # numerical features
@@ -142,7 +144,7 @@ ax.scatter(X_pca[:,0], X_pca[:,1], X_pca[:,2], color=y)
 ax.set_xlabel('PC1')
 ax.set_ylabel('PC2')
 ax.set_zlabel('PC3')
-plt.show()
+# plt.show()
 
 
 ######################### UMAP ############################
@@ -156,7 +158,7 @@ ax = fig.add_subplot(111)
 ax.scatter(X_umap[:,0], X_umap[:,1], color=y)
 ax.set_xlabel('UMAP1')
 ax.set_ylabel('UMAP2')
-plt.show()
+# plt.show()
 # Use HDBSCAN to cluster the data
 import hdbscan
 umap_embeddings = X_umap 
@@ -164,6 +166,6 @@ clusterer = hdbscan.HDBSCAN(min_cluster_size=3, gen_min_span_tree=True)
 cluster_labels = clusterer.fit_predict(umap_embeddings)
 cluster_labels = clusterer.fit_predict(umap_embeddings)
 plt.scatter(umap_embeddings[:, 0], umap_embeddings[:, 1], c=cluster_labels, s=10, cmap='Spectral')
-plt.show()
+# plt.show()
 
 
