@@ -8,6 +8,9 @@ import numpy as np
 df = pd.read_csv('kinematic_features.csv')
 
 
+#################################################
+# Plot kinematic distributions one by one 
+#################################################
 color_map = {'locomotion': 'red', 'immobility': 'green', 'nonlocomotion': 'blue'}
 # extract numerical column names from the dataframe
 numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns # len(numerical_columns) = 16
@@ -24,10 +27,12 @@ for col in numerical_columns:
 plt.tight_layout()
 plt.show()
 
+
+#################################################
+# Plot all the distributions in a single figure
+#################################################
+
 behavior = df['behavior'].unique()
-
-from itertools import product
-
 fig11 = plt.figure(figsize=(10, 10), constrained_layout=False)
 
 # gridspec inside gridspec
@@ -82,5 +87,3 @@ for ax in all_axes:
     if ax.is_last_col():
         ax.spines['right'].set_visible(True)
 plt.show()
-plt.savefig('kinematic_features.png')
-
