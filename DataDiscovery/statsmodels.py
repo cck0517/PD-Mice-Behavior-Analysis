@@ -120,7 +120,7 @@ y_pred = model.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
 report = classification_report(y_test, y_pred)
 print("Accuracy: ", accuracy)
-print("Classification report: \n", report)
+# print("Classification report: \n", report)
 
 # Use the model to predict new data
 short = pd.read_csv('short_video.csv')
