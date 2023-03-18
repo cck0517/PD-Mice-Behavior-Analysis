@@ -13,3 +13,5 @@ VideoEditing/__pycache__/
 
 DataDiscovery/*.mp4
 DataDiscovery/__pycache__/
+
+test.py
