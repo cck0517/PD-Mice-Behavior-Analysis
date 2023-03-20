@@ -5,7 +5,11 @@ from matplotlib.animation import FuncAnimation
 from matplotlib_scalebar.scalebar import ScaleBar # pip install matplotlib-scalebar 
 import cv2
 from moviepy.editor import *
+<<<<<<< Updated upstream
 def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=1/20, fps=1, show_axis=False, producing_video=False):
+=======
+def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=1/20, fps=5, show_axis=False, producing_video=False):
+>>>>>>> Stashed changes
     """
     :param spiketrain_path: path to the spiketrain.mat file
     :param video_path: path to the recording video file (.mp4)
@@ -79,20 +83,23 @@ def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video,
         print('Start to stack recording video and spiketrain video ...')
         # stack the video and spiketrain video
         spiketrain = VideoFileClip(spiketrain_video)
-        st_cap = cv2.VideoCapture(spiketrain_video)
-        st_width = int(st_cap.get(cv2.CAP_PROP_FRAME_WIDTH)) # in pixels
-        st_height = int(st_cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) # in pixels
-        #st_width = int(st_width*1.5)
-        #st_height = int(st_height*1.5)
-        width = int(width*1.5)
-        height = int(height*1.5)
-        recording = VideoFileClip(recording_path).resize((width, height))
-        recording = recording.on_color(size=(width+100, height+300), color=(255, 255, 255), pos=(100, 300))
-        spiketrain = spiketrain.on_color(size = (st_width+50, st_height+200), color=(255, 255, 255), pos=(50, 200)) # pos is the position of the video in width and height
+        cap = cv2.VideoCapture(spiketrain_video)
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) # in pixels
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) # in pixels
+        print("Video width: ", width)
+        print("Video height: ", height)
+        recording = VideoFileClip(recording_path)
+        recording = recording.on_color(size=(1280, 1324), color=(255, 255, 255), pos=(100, 300))
+        spiketrain = spiketrain.on_color(size = (1550, 500), color=(255, 255, 255), pos=(50, 200)) # pos is the position of the video in width and height
         final = [[recording], [spiketrain]]
         final = clips_array(final)
         final = final.on_color(size=(2200, 2800), color=(255, 255, 255), pos=(0, 0))  
         final.write_videofile(stacked_video, fps=30)
+=======
+        recording = VideoFileClip(recording_path)
+        final = CompositeVideoClip([recording], [spiketrain])
+        final.write_videofile(stacked_video, fps=FPS)
+>>>>>>> Stashed changes
     else:
         plt.show()
 
