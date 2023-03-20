@@ -42,7 +42,7 @@ if st.button('Generate video'):
     spt.spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=length_fraction, fps=fps, show_axis=False, producing_video=True)
     right = VideoFileClip(video_path)
     right = right.resize((1600, 2000))
-    right = right.on_color(size=(1600, 2000), color=(255, 255, 255), pos=(0, 100))
+    right = right.on_color(size=(1800, 2800), color=(255, 255, 255), pos=(0, 100))
     left = VideoFileClip(stacked_video)
     final_clip = clips_array([[left, right]])
     final_clip.write_videofile("final.mp4", fps=30)

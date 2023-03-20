@@ -23,7 +23,7 @@ def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video,
     cap = cv2.VideoCapture(recording_path)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) # in pixels
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) # in pixels
-    fig = plt.figure(1, figsize=(15 , 3)) 
+    fig = plt.figure(1, figsize=(19.5 , 4)) 
     ax = fig.add_subplot()
 
     # get video length
@@ -60,15 +60,15 @@ def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video,
                     ax.set_xlim(0,repeat_length)
         return line,
     def animate(i):
-        if i > 0:
-            for f in range((i)*animation_fps, (i+1)*animation_fps):
-                if spike[f]>0:
-                    ax.plot([f,f],[1,4], c='black')
-                if f>repeat_length:
-                    ax.set_xlim(f-repeat_length, f)
-                else:
-                    ax.set_xlim(0,repeat_length)
+        for f in range((i-1)*animation_fps, (i)*animation_fps):
+            if spike[f]>0:
+                ax.plot([f,f],[1,3], c='black')
+            if f>repeat_length:
+                ax.set_xlim(f-repeat_length, f)
+            else:
+                ax.set_xlim(0,repeat_length)
         return line,
+    
 
     anim = FuncAnimation(fig, animate, init_func=init, frames= round(duration*fps), interval=1, blit=False) # interval: delay between frames in milliseconds
     # save the animation as mp4 video file
@@ -79,17 +79,19 @@ def spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video,
         print('Start to stack recording video and spiketrain video ...')
         # stack the video and spiketrain video
         spiketrain = VideoFileClip(spiketrain_video)
-        cap = cv2.VideoCapture(spiketrain_video)
-        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) # in pixels
-        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) # in pixels
-        print("Video width: ", width)
-        print("Video height: ", height)
-        recording = VideoFileClip(recording_path)
-        recording = recording.on_color(size=(1280, 1324), color=(255, 255, 255), pos=(100, 300))
-        spiketrain = spiketrain.on_color(size = (1550, 500), color=(255, 255, 255), pos=(50, 200)) # pos is the position of the video in width and height
+        st_cap = cv2.VideoCapture(spiketrain_video)
+        st_width = int(st_cap.get(cv2.CAP_PROP_FRAME_WIDTH)) # in pixels
+        st_height = int(st_cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) # in pixels
+        #st_width = int(st_width*1.5)
+        #st_height = int(st_height*1.5)
+        width = int(width*1.5)
+        height = int(height*1.5)
+        recording = VideoFileClip(recording_path).resize((width, height))
+        recording = recording.on_color(size=(width+100, height+300), color=(255, 255, 255), pos=(100, 300))
+        spiketrain = spiketrain.on_color(size = (st_width+50, st_height+200), color=(255, 255, 255), pos=(50, 200)) # pos is the position of the video in width and height
         final = [[recording], [spiketrain]]
         final = clips_array(final)
-        final = final.on_color(size=(1600, 2000), color=(255, 255, 255), pos=(0, 0))  
+        final = final.on_color(size=(2200, 2800), color=(255, 255, 255), pos=(0, 0))  
         final.write_videofile(stacked_video, fps=30)
     else:
         plt.show()
@@ -99,4 +101,4 @@ recording_path = 'recording.mp4'
 spiketrain_video = 'spiketrain.mp4'
 stacked_video = 'stacked.mp4'
 
-# spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=1/20, fps=5, show_axis=True, producing_video=False)
+# spiketrain(spiketrain_path, recording_path, spiketrain_video, stacked_video, length_fraction=0.001, fps=30, show_axis=True, producing_video=False)
