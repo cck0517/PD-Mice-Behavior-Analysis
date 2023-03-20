@@ -92,18 +92,61 @@ df = pd.concat([locomotion_df, immobility_df, nonlocomotion_df])
 # save the dataframe to a csv file
 df.to_csv('kinematic_features.csv', index=False)
 
-
-short = pd.read_csv('short_video.csv')
-short = merge_data(short)
-df = short
 # split the dataframe into features and labels
 X = df.iloc[:, :-1] # numerical features
-#y = df.iloc[:, -1] # categorical feature
+y = df.iloc[:, -1] # categorical feature
 
-#print(y.value_counts())
+print(y.value_counts())
+# nonlocomotion    320
+# immobility       268
+# locomotion       200
 
-#color = {'locomotion': 'r', 'immobility': 'b', 'nonlocomotion': 'g'}
-#y = y.map(color)
+######################### OLS ############################
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+
+# Split the data into training and testing sets
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# # Fit the multinomial logistic regression model
+# model = LogisticRegression(multi_class='multinomial', solver='lbfgs')
+# model.fit(X_train, y_train)
+
+# # Make predictions on the testing set
+# y_pred = model.predict(X_test)
+
+# # Evaluate the model performance
+# accuracy = accuracy_score(y_test, y_pred)
+# report = classification_report(y_test, y_pred)
+# print("Accuracy: ", accuracy)
+# # print("Classification report: \n", report)
+
+# # Use the model to predict new data
+# short = pd.read_csv('short_video.csv')
+# X_test = merge_data(short, behavior=None)
+# # Make predictions on the testing set
+# y_pred = model.predict(X_test)
+
+######################### PCA ############################
+# from sklearn.decomposition import PCA
+# from sklearn.preprocessing import StandardScaler
+# scaler = StandardScaler()
+# X_scaled = scaler.fit_transform(X)
+# pca = PCA(n_components=3)
+# X_pca = pca.fit_transform(X_scaled)
+color = {'locomotion': 'r', 'immobility': 'b', 'nonlocomotion': 'g'}
+y = y.map(color)
+# # Create a 3D scatter plot
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.scatter(X_pca[:,0], X_pca[:,1], X_pca[:,2], color=y)
+# ax.set_xlabel('PC1')
+# ax.set_ylabel('PC2')
+# ax.set_zlabel('PC3')
+# # plt.show()
+
+
 ######################### UMAP ############################
 import umap.umap_ as umap
 reducer = umap.UMAP(n_components=3)
@@ -111,7 +154,7 @@ X_umap = reducer.fit_transform(X) #UMAP embedding
 # Create a 2D scatter plot
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(X_umap[:,0], X_umap[:,1], X_umap[:, 2])
+ax.scatter(X_umap[:,0], X_umap[:,1], X_umap[:, 2], color=y)
 ax.set_xlabel('UMAP1')
 ax.set_ylabel('UMAP2')
 ax.set_zlabel('UMAP3')
