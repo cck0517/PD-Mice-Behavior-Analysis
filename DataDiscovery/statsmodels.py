@@ -34,6 +34,13 @@ def rolling_categorical_features(data, window_size= 60):
 def rolling_features(data, window_size= 60):
         return data.rolling(window_size, min_periods=1).mean().shift(0)
 
+
+def interior_angle(p0, p1, p2):
+    v0 = np.array(p0) - np.array(p1)
+    v1 = np.array(p2) - np.array(p1)
+    angle = np.math.atan2(np.linalg.det([v0,v1]), np.dot(v0,v1))
+    return np.degrees(angle)
+
 # calculate kinematic features for a single coordinate (x or y) for a single csv file
 def dataset(data, coordinate='x', behavior=None):
     
@@ -56,11 +63,25 @@ def dataset(data, coordinate='x', behavior=None):
     body_acceleration = (body_velocity.diff() / time_interval).fillna(np.mean(body_velocity.diff() / time_interval))
     body_acceleration = rolling_features(body_acceleration)
 
-    body_acceleration_squared = body_acceleration ** 2
-    body_acceleration_squared = rolling_features(body_acceleration_squared)
-    head_acceleration_squared = head_acceleration ** 2
-    head_acceleration_squared = rolling_features(head_acceleration_squared)
 
+    head_body_angle_right = []
+   
+    for i in range(len(data)):
+        p0 = [data['right_ear_x'][i], data['right_ear_y'][i]]
+        p1 = [data['neck_x'][i], data['neck_y'][i]]
+        p2 = [data['right_side_x'][i], data['right_side_y'][i]]
+        angle_right = interior_angle(p0, p1, p2)
+        head_body_angle_right.append(angle_right)
+    head_body_angle_right = rolling_features(pd.Series(head_body_angle_right))
+
+    head_body_angle_left = []
+    for i in range(len(data)):
+        p0 = [data['left_ear_x'][i], data['left_ear_y'][i]]
+        p1 = [data['neck_x'][i], data['neck_y'][i]]
+        p2 = [data['left_side_x'][i], data['left_side_y'][i]]
+        angle_left = interior_angle(p0, p1, p2)
+        head_body_angle_left.append(angle_left)
+    head_body_angle_left = rolling_features(pd.Series(head_body_angle_left))
     # make a dataframe
     df = pd.DataFrame({'head_centroid_'+coordinate: head_centroid, 
                        'body_centroid_'+coordinate: body_centroid, 
@@ -68,8 +89,8 @@ def dataset(data, coordinate='x', behavior=None):
                        'body_velocity_'+coordinate: body_velocity, 
                        'head_acceleration_'+coordinate: head_acceleration, 
                        'body_acceleration_'+coordinate: body_acceleration, 
-                       'body_acceleration_squared_'+coordinate: body_acceleration_squared,
-                       'head_acceleration_squared_'+coordinate: head_acceleration_squared})
+                       'head_body_angle_right': head_body_angle_right,
+                       'head_body_angle_left': head_body_angle_left})
     
     if behavior:
         df['behavior'] = pd.Series([behavior]*len(df))
@@ -117,14 +138,58 @@ ax.set_ylabel('UMAP2')
 ax.set_zlabel('UMAP3')
 plt.show()
 
-# Use HDBSCAN to cluster the data
-import hdbscan
-umap_embeddings = X_umap 
-clusterer = hdbscan.HDBSCAN()
-cluster_labels = clusterer.fit_predict(umap_embeddings)
-cluster_labels = clusterer.fit_predict(umap_embeddings)
-plt.scatter(umap_embeddings[:, 0], umap_embeddings[:, 1], c=cluster_labels, s=10, cmap='Spectral')
+# # Use HDBSCAN to cluster the data
+# import hdbscan
+# umap_embeddings = X_umap 
+# clusterer = hdbscan.HDBSCAN()
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# cluster_labels = clusterer.fit_predict(umap_embeddings)
+# cluster_labels = clusterer.fit_predict(umap_embeddings)
+# ax.scatter(X_umap[:,0], X_umap[:,1], X_umap[:, 2], c=cluster_labels, cmap='Spectral')
+# ax.set_xlabel('UMAP1')
+# ax.set_ylabel('UMAP2')
+# ax.set_zlabel('UMAP3')
+# plt.show()
+
+# Use KNN to cluster the data
+from sklearn.cluster import KMeans
+kmeans = KMeans(n_clusters=2, random_state=0).fit(X_umap)
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(X_umap[:,0], X_umap[:,1], X_umap[:, 2], c=kmeans.labels_, cmap='Spectral')
+ax.set_xlabel('UMAP1')
+ax.set_ylabel('UMAP2')
+ax.set_zlabel('UMAP3')
 plt.show()
 
+# add the cluster labels to the dataframe
+df['cluster'] = kmeans.labels_
+# save the dataframe to a csv file
+df.to_csv('clustered_kinematic_features.csv', index=False)
 
+df = pd.read_csv('clustered_kinematic_features.csv')
+# roll the cluster labels
+df['cluster'] = rolling_features(df['cluster'], window_size=300).astype(int)
 
+# map the cluster labels to the videos
+import cv2
+cap = cv2.VideoCapture("C:\\Users\\chang\\DeepLabCut\\main\\JUPYTER\\DLC_Data\\video_13-57-19\\short_video.mp4")
+font = cv2.FONT_HERSHEY_SIMPLEX
+text_color = (255, 255, 255)
+text_size = 1
+text_thickness = 2
+
+while True:
+    ret, frame = cap.read()
+    if ret:
+        frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        cv2.putText(frame, 'cluster: {}'.format(df['cluster'][frame_number]), (10, 50), font, text_size, text_color, text_thickness)
+        cv2.imshow('frame', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+    else:
+        break
+
+cap.release()
+cv2.destroyAllWindows()

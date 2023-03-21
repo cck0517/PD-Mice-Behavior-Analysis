@@ -36,7 +36,7 @@ behavior = df['behavior'].unique()
 fig11 = plt.figure(figsize=(10, 10), constrained_layout=False)
 
 # gridspec inside gridspec
-outer_grid = fig11.add_gridspec(4, 4, wspace=0.5, hspace=0.5)
+outer_grid = fig11.add_gridspec(5, 5, wspace=0.5, hspace=0.5)
 
 for i in range(16):
     inner_grid = outer_grid[i].subgridspec(3, 1, wspace=0.5, hspace=0.2) 
