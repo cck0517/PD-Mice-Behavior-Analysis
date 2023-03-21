@@ -154,7 +154,7 @@ plt.show()
 
 # Use KNN to cluster the data
 from sklearn.cluster import KMeans
-kmeans = KMeans(n_clusters=2, random_state=0).fit(X_umap)
+kmeans = KMeans(n_clusters=3, random_state=0).fit(X_umap)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(X_umap[:,0], X_umap[:,1], X_umap[:, 2], c=kmeans.labels_, cmap='Spectral')
