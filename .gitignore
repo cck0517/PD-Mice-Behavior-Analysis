@@ -5,6 +5,8 @@ B-SOID-master/
 B-SOID/
 out.mp4
 
+DeepLabCut/
+
 VideoEditing/frames/
 VideoEditing/*.mp4
 VideoEditing/EEG/
