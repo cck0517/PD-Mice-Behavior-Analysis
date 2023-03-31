@@ -1,4 +1,5 @@
 import pandas as pd
+import select_roi as sr
 
 # load the dataframe
 Dataframe = pd.read_csv("test/test.csv")
@@ -15,10 +16,28 @@ Dataframe = Dataframe.astype(float)
 
 
 # label the dataframe
+# need to be modified
+
+pellet_arr = sr.select_roi(video_path='test/test.mp4')
+hydrogel_arr = sr.select_roi(video_path='test/test.mp4')
+
 Dataframe["cluster"] = Dataframe["var"].apply(lambda x: "immobility" if x < 100 else ("nonlocomotion" if x < 10000 else "locomotion"))
 for i in range(len(Dataframe)):
-     if Dataframe["var"][i] == 'nonlocomotion' & Dataframe['var_priority'][i] > 0.7:
-         Dataframe["cluster"][i] = "grouping"
+     if Dataframe["var"][i] != 'locomotion':
+            # get the coordinates of the nose 
+            nose_x = Dataframe["nose_x"][i]
+            nose_y = Dataframe["nose_y"][i]
+            # check if the nose is in the pellet
+            if sr.is_in_roi(nose_x, nose_y, pellet_arr):
+                Dataframe["cluster"][i] = "eating"
+            # check if the nose is in the hydrogel
+            if sr.is_in_roi(nose_x, nose_y, hydrogel_arr):
+                Dataframe["cluster"][i] = "drinking"
+     elif Dataframe["var"][i] == 'nonlocomotion' & Dataframe['var_priority'][i] > 0.7:
+         Dataframe["cluster"][i] = "grooming"
+
+
+
 # save the dataframe
 Dataframe.to_csv("test/test_clustered.csv", index=False)
 # map the cluster labels to the videos
