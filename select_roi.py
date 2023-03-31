@@ -63,9 +63,7 @@ def select_ROI(video_path):
     return final_points
 
 
-final_points = select_ROI(video_path='test/test.mp4')
-
-def isin_roi(x, y, roi_arr):
+def is_in_roi(x, y, roi_arr):
     if cv2.pointPolygonTest(roi_arr, (x, y), False) >= 0:
         return True
     else:

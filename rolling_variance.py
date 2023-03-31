@@ -47,14 +47,14 @@ def get_rolling_variance(Dataframe, body_parts, pcutoff=0.7):
     return var, var_priority
 
 # Load data
-Dataframe = pd.read_csv("test/test.csv")
+Dataframe = pd.read_csv("test_group2/test.csv")
 # set new column names and reset index
-# new_column_names = Dataframe.iloc[:2].apply(lambda x: '_'.join(map(str, x)), axis=0).tolist()
-# Dataframe = Dataframe.set_axis(new_column_names, axis=1)
-# Dataframe = Dataframe.drop([0, 1], axis=0)
-# Dataframe = Dataframe.reset_index(drop=True)
-# Dataframe = Dataframe.replace('--', 0)
-# Dataframe = Dataframe.astype(float)
+new_column_names = Dataframe.iloc[:2].apply(lambda x: '_'.join(map(str, x)), axis=0).tolist()
+Dataframe = Dataframe.set_axis(new_column_names, axis=1)
+Dataframe = Dataframe.drop([0, 1], axis=0)
+Dataframe = Dataframe.reset_index(drop=True)
+Dataframe = Dataframe.replace('--', 0)
+Dataframe = Dataframe.astype(float)
 
 body_parts = ['nose', 'leftear', 'rightear', 'neck', 'leftside', 'rightside', 'tailbase']
 
@@ -68,4 +68,4 @@ Dataframe["var"] = Dataframe["var"].fillna('ffill')
 Dataframe["var"] = Dataframe["var"].fillna('bfill')
 '''
 # save the dataframe
-Dataframe.to_csv("test/test.csv", index=False)
+Dataframe.to_csv("test_group2/test.csv", index=False)
