@@ -27,9 +27,9 @@ def angle(Dataframe, window=90):
     head_body_angle_left = []
 
     for i in range(len(Dataframe)):
-        p0 = [Dataframe['right_ear_x'][i], Dataframe['right_ear_y'][i]]
+        p0 = [Dataframe['rightear_x'][i], Dataframe['rightear_y'][i]]
         p1 = [Dataframe['neck_x'][i], Dataframe['neck_y'][i]]
-        p2 = [Dataframe['right_side_x'][i], Dataframe['right_side_y'][i]]
+        p2 = [Dataframe['rightside_x'][i], Dataframe['rightside_y'][i]]
         angle_right = interior_angle(p0, p1, p2)
         head_body_angle_right.append(angle_right)
     head_body_angle_right = pd.Series(head_body_angle_right).rolling(window).mean().shift(-int(window/2))
@@ -37,9 +37,9 @@ def angle(Dataframe, window=90):
     head_body_angle_right = head_body_angle_right.fillna(method='bfill')
 
     for i in range(len(Dataframe)):
-        p0 = [Dataframe['left_ear_x'][i], Dataframe['left_ear_y'][i]]
+        p0 = [Dataframe['leftear_x'][i], Dataframe['leftear_y'][i]]
         p1 = [Dataframe['neck_x'][i], Dataframe['neck_y'][i]]
-        p2 = [Dataframe['left_side_x'][i], Dataframe['left_side_y'][i]]
+        p2 = [Dataframe['leftside_x'][i], Dataframe['leftside_y'][i]]
         angle_left = interior_angle(p0, p1, p2)
         head_body_angle_left.append(angle_left)
     head_body_angle_left = pd.Series(head_body_angle_left).rolling(window).mean().shift(-int(window/2))
@@ -53,8 +53,8 @@ def angle(Dataframe, window=90):
 
 # velocity
 def velocity(Dataframe, window=90, min_periods=90):
-    centroid_x = Dataframe[['nose_x', 'left_ear_x', 'right_ear_x', 'neck_x', 'tail_base_x']].mean(axis=1)
-    centroid_y = Dataframe[['nose_y', 'left_ear_y', 'right_ear_y', 'neck_y', 'tail_base_y']].mean(axis=1)
+    centroid_x = Dataframe[['nose_x', 'leftear_x', 'rightear_x', 'neck_x', 'tailbase_x']].mean(axis=1)
+    centroid_y = Dataframe[['nose_y', 'leftear_y', 'rightear_y', 'neck_y', 'tailbase_y']].mean(axis=1)
     centroid_x_diff = np.diff(centroid_x)
     centroid_y_diff = np.diff(centroid_y)
     centroid = [np.linalg.norm([centroid_x_diff[i], centroid_y_diff[i]]) for i in range(len(centroid_x_diff))]
@@ -91,37 +91,40 @@ def main(Dataframe, window=90, min_periods=90):
     return Dataframe
 
 
+Dataframe = pd.read_csv("test.csv")
+
+Dataframe = main(Dataframe)
+
+# save to csv
+Dataframe.to_csv("test_kinematics.csv", index=False)
 
 
-short_video = pd.read_csv("short_video.csv")
-short_video = main(short_video)
-X = short_video[['head_body_angle_right', 'head_body_angle_left', 
-                 'centroid_velocity', 'centroid_acceleration']]
 
+# ######################### UMAP ############################
+# X = main[['head_body_angle_right', 'head_body_angle_left', 
+#                  'centroid_velocity', 'centroid_acceleration']]
+# import umap.umap_ as umap
+# import matplotlib.pyplot as plt
+# reducer = umap.UMAP(n_components=3)
+# X_umap = reducer.fit_transform(X) #UMAP embedding
+# # Create a 3D scatter plot
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.scatter(X_umap[:,0], X_umap[:,1], X_umap[:, 2], alpha=0.5)
+# ax.set_xlabel('UMAP1')
+# ax.set_ylabel('UMAP2')
+# ax.set_zlabel('UMAP3')
+# plt.show()
 
-######################### UMAP ############################
-import umap.umap_ as umap
-import matplotlib.pyplot as plt
-reducer = umap.UMAP(n_components=3)
-X_umap = reducer.fit_transform(X) #UMAP embedding
-# Create a 3D scatter plot
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.scatter(X_umap[:,0], X_umap[:,1], X_umap[:, 2], alpha=0.5)
-ax.set_xlabel('UMAP1')
-ax.set_ylabel('UMAP2')
-ax.set_zlabel('UMAP3')
-plt.show()
-
-######################### KNN ############################
-from sklearn.cluster import KMeans
-kmeans = KMeans(n_clusters=3, random_state=0).fit(X_umap)
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.scatter(X_umap[:,0], X_umap[:,1], X_umap[:, 2], c=kmeans.labels_, cmap='Spectral')
-ax.set_xlabel('UMAP1')
-ax.set_ylabel('UMAP2')
-ax.set_zlabel('UMAP3')
-plt.show()
+# ######################### KNN ############################
+# from sklearn.cluster import KMeans
+# kmeans = KMeans(n_clusters=3, random_state=0).fit(X_umap)
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.scatter(X_umap[:,0], X_umap[:,1], X_umap[:, 2], c=kmeans.labels_, cmap='Spectral')
+# ax.set_xlabel('UMAP1')
+# ax.set_ylabel('UMAP2')
+# ax.set_zlabel('UMAP3')
+# plt.show()
 
 
