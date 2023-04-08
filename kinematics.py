@@ -134,10 +134,7 @@ def main(Dataframe, window=90,  body_parts = ['nose', 'leftear', 'rightear', 'ne
     return Dataframe
 
 
-
-
 def plot(Dataframe):
-
     fig = plt.figure(figsize=(20, 10))
     ax1 = fig.add_subplot(611)
     ax2 = fig.add_subplot(612)
@@ -163,6 +160,10 @@ def plot(Dataframe):
 ############################################################################################################
 
 df_path = "C:\\Users\\chang\\DeepLabCut\\main\\JUPYTER\\DLC_Data\\videos\\2022-10-12 14-41-54DLC_resnet50_mainDec6shuffle1_120000.csv"
+
+# angle is always computed for the ear, neck, and tailbase
+# body parts included to calculate velocity and acceleration
+
 body_parts = ['nose', 'leftear', 'rightear', 'neck', 'tailbase']
 
 ############################################################################################################
